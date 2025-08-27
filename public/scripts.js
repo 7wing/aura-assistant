@@ -365,12 +365,13 @@ generateBtn.addEventListener("click", async (e) => {
         const filters = getSelectedFilters();
         const fullPrompt = createFullPrompt(promptText, filters);
 
-        const response = await fetch("http://localhost:3000/api/gemini", {
+        const response = await fetch("/api/gemini", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: fullPrompt }), 
+            body: JSON.stringify({ prompt: fullPrompt }),
             signal: abortController.signal
         });
+
 
         if (!response.ok) {
             throw new Error(`API error: ${response.statusText}`);
@@ -423,11 +424,13 @@ async function generateTitle(exchanges) {
     const titlePrompt = `Based on the following conversation, create a concise, one-line title (max 5 words). Do not include any extra text or punctuation. Just the title.\n\n${conversationText}`;
     
     try {
-        const response = await fetch("http://localhost:3000/api/gemini", {
+        const response = await fetch("/api/gemini", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: titlePrompt })
         });
+
+
         const data = await response.json();
         return data?.candidates?.[0]?.content?.parts?.[0]?.text.trim().replace(/\*\*/g, '') || "Untitled Chat";
     } catch (err) {
