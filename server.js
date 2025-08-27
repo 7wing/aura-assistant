@@ -1,49 +1,48 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+import express from 'express';
+import cors from 'cors';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 app.post('/api/gemini', async (req, res) => {
-    const { prompt } = req.body;
-    const GEMINI_API_URL = process.env.GEMINI_API_URL;
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-    if (!GEMINI_API_KEY || !GEMINI_API_URL) {
-        return res.status(500).json({ error: 'API key or URL not configured' });
-    }
-
     try {
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-            }),
-        });
+        const { prompt } = req.body;
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`API error: ${response.status} - ${errorText}`);
+        if (!prompt) {
+            return res.status(400).json({ error: 'Prompt is required.' });
         }
 
-        const data = await response.json();
-        res.json(data);
+        const modelUrl = new URL(process.env.GEMINI_API_URL);
+        const modelName = modelUrl.pathname.split('/').pop().split(':')[0];
+
+        if (!modelName) {
+            return res.status(500).json({ error: 'Model name not found in GEMINI_API_URL.' });
+        }
+
+        const model = genAI.getGenerativeModel({ model: modelName });
+
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+
+        res.json(response);
+
     } catch (error) {
-        console.error('Error fetching from Gemini API:', error);
-        res.status(500).json({ error: 'Failed to fetch from Gemini API' });
+        console.error('Error with Gemini API:', error);
+        res.status(500).json({ error: 'Failed to generate content from Gemini API.' });
     }
 });
 
-app.use(express.static('public')); 
+app.use(express.static('public'));
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server listening on http://localhost:${port}`);
 });
