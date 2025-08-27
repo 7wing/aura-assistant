@@ -1,4 +1,6 @@
 /* === Core App State & Constants === */
+const BACKEND_PROXY_URL = '/api/server'; 
+
 const LARGE_SCREEN_BREAKPOINT = 768;
 const isLargeScreen = () => window.innerWidth >= LARGE_SCREEN_BREAKPOINT;
 
@@ -365,7 +367,7 @@ generateBtn.addEventListener("click", async (e) => {
         const filters = getSelectedFilters();
         const fullPrompt = createFullPrompt(promptText, filters);
 
-        const response = await fetch("/api/gemini", {
+        const response = await fetch(BACKEND_PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: fullPrompt }),
@@ -424,7 +426,7 @@ async function generateTitle(exchanges) {
     const titlePrompt = `Based on the following conversation, create a concise, one-line title (max 5 words). Do not include any extra text or punctuation. Just the title.\n\n${conversationText}`;
     
     try {
-        const response = await fetch("/api/gemini", {
+        const response = await fetch(BACKEND_PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: titlePrompt })
