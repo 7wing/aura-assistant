@@ -1,8 +1,4 @@
 /* === Core App State & Constants === */
-
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-const GEMINI_API_KEY = "";
-
 const LARGE_SCREEN_BREAKPOINT = 768;
 const isLargeScreen = () => window.innerWidth >= LARGE_SCREEN_BREAKPOINT;
 
@@ -79,11 +75,13 @@ clearBtns.forEach(btn => {
         };
         chatOutput.innerHTML = "";
         updateHistoryUI();
+        loadHistory();
 
         if (searchInput.value.length > 0) {
             searchInput.value = "";
             searchInput.dispatchEvent(new Event("input"));
         }
+        
     });
 });
 
@@ -135,8 +133,17 @@ function loadHistory() {
     const saved = JSON.parse(localStorage.getItem("chatSessions")) || [];
     saved.sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt));
     saved.forEach(session => renderSessionItem(session, historyContainer));
-    updateHistoryUI(); 
+    updateHistoryUI();
 
+    const welcomeMessage = chatOutput.querySelector(".welcome-message")
+    if (currentSession.exchanges.length === 0 && !welcomeMessage) {
+        renderWelcomeMessage();
+    }
+
+    const activeItem = document.querySelector(`[data-session-id="${currentSession.id}"]`);
+    if (activeItem) {
+        activeItem.classList.add("active");
+    }
 }
 
 /* === Time === */
@@ -150,9 +157,7 @@ function getRelativeDate(timestamp) {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
     const dateToCheck = new Date(timestamp);
-    
     const timeOptions = { hour: '2-digit', minute: '2-digit' };
     
     if (isSameDay(dateToCheck, today)) {
@@ -175,24 +180,36 @@ function renderSessionItem(session, container) {
     div.className = "history-item";
     div.dataset.sessionId = session.id;
 
+    if (session.id === currentSession.id) {
+        div.classList.add("active");
+    }
+
     const title = session.title || session.exchanges[0]?.prompt.slice(0, 30) || "New Chat";
-    
+
     div.innerHTML = `
-    <div class="history-content">
-        <p><strong>${title}</strong></p>
-        <div class="stamp">
-            <span>${lastExchangeDate}</span>
-            <button class="delete-chat-btn"><i class="bx bx-trash"></i></button>
+        <div class="history-content">
+            <p><strong>${title}</strong></p>
+            <div class="stamp">
+                <span>${lastExchangeDate}</span>
+                <button class="delete-chat-btn"><i class="bx bx-trash"></i></button>
+            </div>
         </div>
-    </div>
     `;
 
     div.querySelector(".delete-chat-btn").addEventListener("click", (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); 
         deleteSession(session.id);
+        loadHistory();
     });
 
     div.querySelector(".history-content").addEventListener("click", () => {
+
+        document.querySelectorAll(".history-item").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        div.classList.add("active");
+
         currentSession = session;
         chatOutput.innerHTML = "";
         [...session.exchanges].forEach(renderChatExchange);
@@ -215,18 +232,19 @@ function renderChatExchange(chat) {
     `;
     
     chatOutput.prepend(exchangeBlock);
+    
 }
 
-// function renderWelcomeMessage() {
-//     const welcomeMessage = document.createElement("div");
-//     welcomeMessage.className = "chat-exchange welcome-message";
-//     welcomeMessage.innerHTML = `
-//         <div class="chat-response">
-//             <p>Aura Assistant is ready. Ask anything, build anything, explore everything.</p>
-//         </div>
-//     `;
-//     chatOutput.appendChild(welcomeMessage);
-// }
+function renderWelcomeMessage() {
+    const welcomeMessage = document.createElement("div");
+    welcomeMessage.className = "chat-exchange welcome-message";
+    welcomeMessage.innerHTML = `
+        <div class="chat-response">
+            <p id="text">Aura Assistant is ready. Ask anything, build anything, explore everything.</p>
+        </div>
+    `;
+    chatOutput.appendChild(welcomeMessage);
+}
 
 /* === Chat Generation and Filtering === */
 const filterToggleBtn = document.getElementById("filterToggle");
@@ -276,6 +294,12 @@ document.querySelectorAll(".filter-select").forEach(select => {
 
 filterToggleBtn.addEventListener("click", () => {
     promptFilters.classList.toggle("show");
+    if (promptFilters.classList.contains("show")) {
+        chatOutput.classList.add("height")
+    }
+    else {
+        chatOutput.classList.remove("height")
+    }
 });
 
 /* Dynamic Placeholder */
@@ -311,14 +335,13 @@ generateBtn.addEventListener("click", async (e) => {
     const promptText = promptInput.value.trim();
     if (!promptText) return;
 
-    // Remove welcome message when generation starts
-    // const welcomeMessage = chatOutput.querySelector(".welcome-message");
-    // if (welcomeMessage) {
-    //     welcomeMessage.remove();
-    // }
+    const welcomeMessage = chatOutput.querySelector(".welcome-message");
+    if (welcomeMessage) {
+        welcomeMessage.remove();
+    }
 
     abortController = new AbortController();
-    generateBtn.textContent = "Stop";
+    generateBtn.textContent = "Terminate";
     generateBtn.classList.add("stop-btn");
     promptInput.disabled = true;
 
@@ -342,10 +365,10 @@ generateBtn.addEventListener("click", async (e) => {
         const filters = getSelectedFilters();
         const fullPrompt = createFullPrompt(promptText, filters);
 
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        const response = await fetch("http://localhost:3000/api/gemini", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] }),
+            body: JSON.stringify({ prompt: fullPrompt }), 
             signal: abortController.signal
         });
 
@@ -400,10 +423,10 @@ async function generateTitle(exchanges) {
     const titlePrompt = `Based on the following conversation, create a concise, one-line title (max 5 words). Do not include any extra text or punctuation. Just the title.\n\n${conversationText}`;
     
     try {
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        const response = await fetch("http://localhost:3000/api/gemini", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: titlePrompt }] }] })
+            body: JSON.stringify({ prompt: titlePrompt })
         });
         const data = await response.json();
         return data?.candidates?.[0]?.content?.parts?.[0]?.text.trim().replace(/\*\*/g, '') || "Untitled Chat";

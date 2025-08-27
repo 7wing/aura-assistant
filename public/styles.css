@@ -1,4 +1,151 @@
-/* Global styles */
+/* 🌒 Dark Mode Overrides */
+
+.dark-mode {
+  --bg-main: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --hover-bg: #2c3849;
+  --focus-outline: #60a5fa;
+  --card-bg: #1e293b;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+.dark-mode .sidebar {
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -2px 0 8px var(--shadow-color);
+}
+
+.dark-mode .search input,
+.dark-mode .filter-dropdown select,
+.dark-mode .top-prompt-form textarea {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .search input::placeholder, 
+.dark-mode .top-prompt-form textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.dark-mode button:hover,
+.dark-mode input:hover,
+.dark-mode select:hover,
+.dark-mode textarea:hover {
+  background-color: var(--hover-bg);
+  box-shadow: 0 0 5px whitesmoke;
+}
+
+.dark-mode button:focus,
+.dark-mode input:focus,
+.dark-mode select:focus,
+.dark-mode textarea:focus {
+  outline: 1px solid var(--focus-outline);
+}
+
+.dark-mode .history-item,
+.dark-mode .main .output .chat-exchange {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.dark-mode .clear-all-history-btn:hover,
+.dark-mode .delete-chat-btn:hover {
+  background-color: var(--text-primary);
+}
+
+.dark-mode .history-item span {
+  color: var(--text-secondary);
+}
+
+
+.dark-mode .sidebar h4 {
+  color: var(--text-primary);
+}
+
+.dark-mode .chat-prompt p,
+.dark-mode .chat-response p {
+  color: var(--text-primary);
+}
+
+.dark-mode .reset-option {
+  color: var(--text-secondary);
+}
+
+.dark-mode .control-panel button,
+.dark-mode .top-prompt-form .filter-btn {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dark-mode .history-item.active {
+  background-color: #0f172a;
+}
+
+#themeIcon {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#themeToggleBtn:active #themeIcon {
+  transform: scale(0.9);
+  opacity: 0.7;
+}
+
+/* Transition */
+
+html, body {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+body.theme-transitioning {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.header, .main, .sidebar, button, input, textarea {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 12px; 
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Global styles */ 
 
 *, ::before, ::after {
   box-sizing: border-box;
@@ -31,9 +178,8 @@ body {
   color: #333;
   font-family: 'Segoe UI', sans-serif;
   background: #f9f9f9;
-  display: flex;
-  flex-direction: row-reverse;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* Sidebar */
@@ -82,11 +228,11 @@ body {
 }
 
 .search input {
-    width: 100%;
-    height: 2.2rem;
-    font-size: 0.8rem;
-    text-align: left;
-    padding-left: 2.5rem;
+  width: 100%;
+  height: 2.2rem;
+  font-size: 0.8rem;
+  text-align: left;
+  padding-left: 2.5rem;
 }
 
 .search i  {
@@ -111,7 +257,7 @@ body {
 
 .prompt-form .filter-dropdown {
   text-align: left;
-  margin-bottom: 1rem;
+  margin-bottom: .5rem;
   max-height: 0;                
   opacity: 0;                   
   overflow: hidden;             
@@ -130,8 +276,8 @@ body {
   text-align: center;
 }
 
-.prompt-form .filter-dropdown.show {
-  max-height: 200px;           
+.prompt-form .filter-dropdown.show {          
+  max-height: 200px;
   opacity: 1;                  
   pointer-events: auto;        
   visibility: visible;         
@@ -194,21 +340,21 @@ body {
 
 .history-item .history-content .stamp .delete-chat-btn{
   border: none;
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: 0.25rem 0.4rem 0;
   color: #615a5a;
   cursor: pointer;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.history-item.active {
+  background-color: #e0e0e0;
+  border-left: 4px solid #007bff; 
+  font-weight: bold;
 }
 
 /* Search history section */
-
-.no-results-text {
-  font-size: 0.9rem;
-  margin: 0;
-  color: #333;
-  font-weight: bold;
-  font-style: italic;
-}
 
 .middle-section {
   display: none;
@@ -223,70 +369,75 @@ body {
 /* Main content */
 
 .main {
-    padding: 1.8rem .9rem;
-  }
+  padding: 1.8rem .9rem;
+}
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .header .title {
-    font-size: 2rem;
-    font-weight: bold;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-size: 2rem;
+  font-weight: bold;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .control-panel {
-    display: flex;
-    gap: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
 .control-panel button, 
 .top-prompt-form .filter-btn {
-    font-size: 1.2rem;
-    padding: 0.25rem 0.4rem 0;
-    color: #615a5a;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 8px; 
-    cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1.2rem;
+  padding: 0.25rem 0.4rem 0;
+  color: #615a5a;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px; 
+  cursor: pointer;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 .top-prompt-form {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .top-prompt-form textarea {
-    flex: 1;
-    width: 70%;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    resize: none; 
-    overflow-wrap: break-word;
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  resize: none; 
+  overflow-wrap: break-word;
 }
 
 .top-prompt-form .generate-btn {
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .main .output {
-  height: calc(100vh - 13.3rem);
+  height: calc(100vh - 12.5rem);
+  max-height: calc(100vh - 13rem);
   overflow-y: auto;
+  transition: max-height 0.4s ease-in-out;
+}
+
+.main .output.height {
+  max-height: calc(100vh - 15rem);
 }
 
 .main .output .chat-exchange {
@@ -312,11 +463,14 @@ body {
     padding: 0;
 }
 
+#text {
+  padding-top: .5rem;
+}
+
 .response-content {
     margin-bottom: 0;
     padding-bottom: 0;
 }
-
 
 .reset-option {
   color: #888;

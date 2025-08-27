@@ -12,20 +12,21 @@
 <body>
 
   <div class="sidebar">
+
     <div class="top-section">
       <button type="button" class="new-chat-btn" aria-label="Start a new chat">New Chat</button>
         <form class="search" role="search">
             <i class="bx bx-search search-icon" aria-hidden="true"></i>
-            <input type="text" id="searchInput" name="search" placeholder="Search Chats" aria-label="Search chats"/>
+            <input type="text" id="searchInput" name="search" placeholder="Search Chats" aria-label="Search chats" autocomplete="off"/>
         </form>
     </div>
 
     <div class="middle-section">
-    <div class="search-header">
-      <h4 class="history-title" id="searchResultsTitle"></h4>
-      <button type="button" class="clear-all-history-btn" aria-label="Clear all chat history">Clear All History</button>
-    </div>
-    <ul id="resultsList"></ul>
+      <div class="search-header">
+        <h4 class="history-title" id="searchResultsTitle"></h4>
+        <button type="button" class="clear-all-history-btn" aria-label="Clear all chat history">Clear All History</button>
+      </div>
+      <ul id="resultsList"></ul>
     </div>
 
     <div class="bottom-section">
@@ -37,18 +38,22 @@
         <div id="historyContainer"></div>
       </div>
     </div>
+
   </div>
 
   <div class="main">
+
     <div class="header">
       <div class="title">Aura Assistant</div>
       <div class="control-panel">
-        <button type="button" class="theme-btn" id="themeToggle" aria-label="Toggle theme"><i class='bx bx-sun'></i></button>
+        <button type="button" class="theme-btn" id="themeToggle" aria-label="Toggle theme"><i id="themeIcon" class='bx bx-sun'></i></button>
         <button type="button" class="navbar-btn" id="navbarToggle" aria-label="Toggle navigation"><i class='bx bx-menu-select'></i></button>
       </div>
     </div>
+
     <div class="input-area">
       <form class="prompt-form">
+
         <div class="top-prompt-form">
           <textarea placeholder="Generate a code snippet" name="prompt" 
           aria-label="Enter your prompt" autocomplete="off"
@@ -72,15 +77,19 @@
 
       </form>
     </div>
+
     <div class="divider">
       <div class="output" id="chatOutput"></div>
       <div class="footer">
         <p class="prompt-disclaim">Aura Assistant can make mistakes, so double-check it</p>
       </div>
     </div>
+
   </div>
   
+
     <script src="scripts.js"></script>
+    <script src="theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 </body>
