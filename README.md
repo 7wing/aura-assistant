@@ -6,7 +6,7 @@ This project demonstrates my proficiency in full-stack development, including AP
 
 🚀 **Live Demo**
 
-Experience Aura Assistant in action: https://aura-assistant-six.vercel.app/
+[Aura Assistant](https://aura-assistant-alpha.vercel.app/)
 
 🖼️ **Screenshots**
 
