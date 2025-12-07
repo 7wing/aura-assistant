@@ -1,0 +1,42 @@
+{
+  "name": "aura-assistant",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A conversational AI built on Gemini, delivering fluid chat experiences and smart, session-aware backend logic.",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "keywords": [
+    "AI assistant",
+    "Gemini-powered",
+    "conversational interface",
+    "smart responses",
+    "server-side logic",
+    "real-time chat",
+    "session-aware",
+    "dynamic context",
+    "backend orchestration",
+    "seamless integration",
+    "intuitive UX",
+    "responsive design",
+    "frictionless interaction",
+    "adaptive feedback",
+    "semantic UI",
+    "expressive theming",
+    "polished transitions",
+    "premium experience",
+    "modular architecture",
+    "serverless functions",
+    "environment variables",
+    "Markdown parsing",
+    "conditional rendering",
+    "accessibility-first",
+    "dark mode support",
+    "scalable deployment"
+  ],
+  "author": "7wing",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  }
+}
